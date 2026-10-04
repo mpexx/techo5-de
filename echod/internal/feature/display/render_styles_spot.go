@@ -327,7 +327,7 @@ func (r *roundRenderer) analogFace(s roundScene) {
 		}
 		r.text(r.small, w.Temp, left+int(2*u)+8, 150, colText)
 	}
-	day := strings.ToUpper(s.now.Format("Mon 2"))
+	day := strings.ToUpper(germanScreenText(s.now.Format("Mon 2")))
 	dw := r.width(r.label, day) + 20
 	r.roundFill(image.Rect(center-dw/2, 302, center+dw/2, 334), 8, color.RGBA{24, 29, 36, 255}, color.RGBA{24, 29, 36, 255})
 	r.centered(r.label, day, 325, colText)
@@ -506,7 +506,7 @@ func (r *roundRenderer) dashboardFace(s roundScene) {
 	days := s.style.days[:min(len(s.style.days), 3)]
 	for i, d := range days {
 		cx := center - 100 + i*100
-		name := d.When.Format("Mon")
+		name := germanWeekdayAbbrev(d.When.Format("Mon"))
 		if i == 0 {
 			name = "Now"
 		}

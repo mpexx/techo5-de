@@ -123,6 +123,7 @@ func (r *paint) faces() sheetFaces {
 }
 
 func (r *paint) text(face font.Face, s string, x, baseline int, c color.Color) {
+	s = germanScreenText(s)
 	if face == nil {
 		return
 	}
@@ -143,6 +144,7 @@ func (r *paint) text(face font.Face, s string, x, baseline int, c color.Color) {
 }
 
 func (r *paint) width(face font.Face, s string) int {
+	s = germanScreenText(s)
 	if face == nil {
 		return 0
 	}
@@ -152,6 +154,7 @@ func (r *paint) width(face font.Face, s string) int {
 // wrap breaks text into lines no wider than maxW, on spaces; a single word wider than the line is
 // left to overflow rather than split.
 func (r *paint) wrap(face font.Face, s string, maxW int) []string {
+	s = germanScreenText(s)
 	var lines []string
 	var line string
 	for _, word := range strings.Fields(s) {
@@ -590,6 +593,7 @@ func (r *paint) picker(p pickerView, scroll int) int {
 
 // fit shortens text to room pixels, with an ellipsis where it was cut.
 func (r *paint) fit(face font.Face, text string, room int) string {
+	text = germanScreenText(text)
 	if text == "" || r.width(face, text) <= room {
 		return text
 	}

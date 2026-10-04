@@ -71,7 +71,7 @@ func (r *renderer) weatherPage(s scene) {
 			x := left + i*colW
 			// Each day in its own box.
 			r.box(image.Rect(x+r.s(3), r.s(88), x+colW-r.s(3), r.s(360)), ember, r.s(2))
-			name := d.When.Format("Mon")
+			name := germanWeekdayAbbrev(d.When.Format("Mon"))
 			if d.When.IsZero() {
 				name = fmt.Sprintf("+%d", i+1)
 			}

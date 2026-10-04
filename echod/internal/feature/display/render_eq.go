@@ -101,7 +101,7 @@ func (r *renderer) eqText(lines []eqLine, y, bottom int) {
 	for i, l := range lines {
 		base := y + l.lineH - r.s(14)
 		last := i+1 < len(lines) && base+lines[i+1].lineH > bottom+r.s(10)
-		text := l.text
+		text := germanScreenText(l.text)
 		if last {
 			text += " …"
 		}

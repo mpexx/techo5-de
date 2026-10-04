@@ -770,7 +770,7 @@ func (r *renderer) cameraSoundTapped(p image.Point) bool {
 const weatherMark = 46
 
 // conditionWords is home.ConditionWords, by its old name here.
-func conditionWords(c string) string { return home.ConditionWords(c) }
+func conditionWords(c string) string { return germanScreenText(home.ConditionWords(c)) }
 
 // cornerClock keeps the time in view while words have the screen.
 func (r *renderer) cornerClock(s scene) {

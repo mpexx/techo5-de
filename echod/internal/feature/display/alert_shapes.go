@@ -215,7 +215,7 @@ func alertWhen(a home.Alert, now time.Time) string {
 	at := func(t time.Time) string {
 		t = t.Local()
 		if y, m, d := t.Date(); y != now.Year() || m != now.Month() || d != now.Day() {
-			return t.Format("Mon") + " " + clockText(t)
+			return germanWeekdayAbbrev(t.Format("Mon")) + " " + clockText(t)
 		}
 		return clockText(t)
 	}

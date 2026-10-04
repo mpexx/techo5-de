@@ -446,7 +446,7 @@ func (r *renderer) dashboardStyle(s scene, box image.Rectangle) {
 	cw := box.Dx() / len(days)
 	for i, d := range days {
 		cx := box.Min.X + cw*i + cw/2
-		name := d.When.Format("Mon")
+		name := germanWeekdayAbbrev(d.When.Format("Mon"))
 		if i == 0 {
 			name = "Today"
 		}

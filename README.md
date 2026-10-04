@@ -29,6 +29,12 @@
 
 ---
 
+> **Deutsche Bildschirmübersetzung (inoffizieller Fork):** Dieser Stand ergänzt TECHO5
+> v0.9.30 um deutsche Bildschirmtexte. Die Web-Einrichtungsseite bleibt englisch.
+> Änderungen, Bauhinweise und Hinweise zum Übertragen auf neuere Versionen stehen in
+> [docs/german-localization.md](docs/german-localization.md).
+> Die oben verlinkten offiziellen Releases enthalten diese Übersetzung nicht.
+
 **TECHO5** (Tech Echo 5) is open firmware for the **Amazon Echo Show 5**. It replaces Android and
 Alexa with a small Alpine Linux image and one Go daemon, turning the Show into a fast, private Home
 Assistant voice satellite with a touch screen of its own.

@@ -35,7 +35,7 @@ var (
 )
 
 // conditionWords is home.ConditionWords, by its old name here.
-func conditionWords(c string) string { return home.ConditionWords(c) }
+func conditionWords(c string) string { return germanScreenText(home.ConditionWords(c)) }
 
 // weatherLine is the reading under the clock: "72° Partly cloudy", or nothing without one.
 func weatherLine(w home.Weather) string {
@@ -125,7 +125,7 @@ func (r *roundRenderer) weatherFace(s roundScene) (bolt image.Rectangle) {
 	for i := 0; i < cols; i++ {
 		d := next[i]
 		x := center + (2*i-(cols-1))*44
-		name := d.When.Format("Mon")
+		name := germanWeekdayAbbrev(d.When.Format("Mon"))
 		if d.When.IsZero() {
 			name = fmt.Sprintf("+%d", i+1)
 		}

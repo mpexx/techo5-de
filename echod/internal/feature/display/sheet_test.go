@@ -337,7 +337,9 @@ func TestACutLineLeavesTheValueWhole(t *testing.T) {
 			t.Fatalf("card %d wide: the line was not cut, so this does not test anything", w)
 		}
 		right := card.Max.X - r.s(26)
-		if room := right - 58 - end - r.s(rowGap); r.fit(fc.value, row.value, room) != row.value {
+		// The display-only German overlay changes the visible value, while the
+		// picker's stored option remains the original English string.
+		if room := right - 58 - end - r.s(rowGap); r.fit(fc.value, row.value, room) != germanScreenText(row.value) {
 			t.Errorf("card %d wide: the value is cut to %q", w, r.fit(fc.value, row.value, room))
 		}
 	}

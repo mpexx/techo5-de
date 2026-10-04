@@ -459,7 +459,7 @@ func (r *roundRenderer) conversation(s roundScene) {
 	title, col := "", colText
 	switch s.phase {
 	case "listening":
-		title, col = "Listening", colListening
+		title, col = "Ich höre zu", colListening
 	case "thinking":
 		title, col = "Thinking", colThinking
 	}
@@ -631,7 +631,7 @@ func (r *roundRenderer) text(face font.Face, s string, x, baseline int, c color.
 }
 
 func (r *roundRenderer) width(face font.Face, s string) int {
-	return font.MeasureString(face, s).Round()
+	return r.paint.width(face, s)
 }
 
 // centered2 is centered about x rather than the middle of the panel.
