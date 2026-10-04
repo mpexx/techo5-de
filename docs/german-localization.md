@@ -21,3 +21,11 @@ Weitere Bau- und Installationshinweise stehen in [building.md](building.md). Ein
 3. `go test ./...` im Verzeichnis `echod` ausführen und die Menüs sowie Sprachzustände am Gerät prüfen.
 
 Der eigenständige Patch zur Basisversion v0.9.30 kann bei Bedarf mit `git format-patch -1 --stdout` aus diesem Commit erzeugt werden.
+
+## Neue Originalversionen
+
+Der Workflow [`update-german-fork.yml`](../.github/workflows/update-german-fork.yml) prüft stündlich die neueste veröffentlichte Show-Version von `HuskerMinion/techo5`. Er läuft auch manuell über **Actions → Prepare German fork for upstream releases → Run workflow**. Bei einer neuen Version führt er den Release-Stand in einem eigenen Zweig mit der deutschen Version zusammen, testet Show, Dot und Spot und erstellt einen Pull Request **innerhalb dieses Forks**. Der deutsche Standardzweig ändert sich erst, wenn der Pull Request zusammengeführt wird. Das Gerät selbst wird nicht aktualisiert.
+
+Für die erstmalige Einrichtung muss dieser Workflow im deutschen Standardzweig des Forks liegen. Unter **Actions** die Workflows des Forks aktivieren; GitHub deaktiviert sie beim Forken zunächst. Unter **Settings → Actions → General → Workflow permissions** außerdem **Allow GitHub Actions to create and approve pull requests** einschalten. Der Workflow verwendet das automatisch bereitgestellte `GITHUB_TOKEN`; ein persönliches Token ist nicht nötig. Bei 60 Tagen ohne Repository-Aktivität kann GitHub geplante Workflows wieder deaktivieren; in diesem Fall unter **Actions** erneut aktivieren.
+
+Bei Merge-Konflikten oder fehlgeschlagenen Tests stoppt der Workflow und zeigt den Fehler unter **Actions** an. Dann muss die Übersetzung an die neue Version angepasst werden. Auch bei erfolgreichen Tests neue Bildschirmtexte im Pull Request prüfen: unbekannte Texte bleiben sonst englisch. Die Prüfung erfolgt ungefähr stündlich und kann sich auf GitHub verzögern.

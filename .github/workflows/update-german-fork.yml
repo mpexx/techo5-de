@@ -1,0 +1,120 @@
+name: Prepare German fork for upstream releases
+
+# The upstream repository cannot trigger a workflow in this fork. Poll its latest
+# published Show release; workflow_dispatch also allows a manual check.
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: german-fork-upstream-release
+  cancel-in-progress: false
+
+jobs:
+  prepare-update:
+    if: github.repository == 'mpexx/techo5-de'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          fetch-depth: 0
+
+      - name: Check latest upstream release
+        id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="$(gh api repos/HuskerMinion/techo5/releases/latest --jq '.tag_name')"
+          if [[ ! "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Unexpected upstream release tag: $tag"
+            exit 1
+          fi
+          if [[ "$(cat .github/upstream-release.txt)" == "$tag" ]]; then
+            echo "Latest release $tag is already recorded."
+            exit 0
+          fi
+
+          git remote add upstream https://github.com/HuskerMinion/techo5.git
+          git fetch --no-tags upstream "refs/tags/$tag:refs/tags/$tag"
+          release_commit="$(git rev-parse "refs/tags/$tag^{commit}")"
+          if git merge-base --is-ancestor "$release_commit" HEAD; then
+            echo "Release $tag is already part of this branch."
+            exit 0
+          fi
+
+          open_updates="$(gh pr list --repo "$GITHUB_REPOSITORY" --state open --limit 100 \
+            --json headRefName --jq '[.[] | select(.headRefName | startswith("automation/upstream-"))] | length')"
+          if [[ "$open_updates" != 0 ]]; then
+            echo "An upstream update pull request is already open."
+            exit 0
+          fi
+
+          branch="automation/upstream-$tag"
+          if git ls-remote --exit-code --heads origin "$branch" >/dev/null 2>&1; then
+            echo "Branch $branch already exists; inspect it before retrying."
+            exit 0
+          fi
+
+          echo "update=true" >> "$GITHUB_OUTPUT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "branch=$branch" >> "$GITHUB_OUTPUT"
+          echo "release_commit=$release_commit" >> "$GITHUB_OUTPUT"
+
+      - name: Merge upstream release into a proposal branch
+        if: steps.release.outputs.update == 'true'
+        env:
+          TAG: ${{ steps.release.outputs.tag }}
+          BRANCH: ${{ steps.release.outputs.branch }}
+          RELEASE_COMMIT: ${{ steps.release.outputs.release_commit }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c "$BRANCH"
+          if ! git merge --no-ff --no-edit "$RELEASE_COMMIT"; then
+            git status --short
+            echo "::error::Merge conflict for $TAG. Port the German display changes manually."
+            exit 1
+          fi
+          printf '%s\n' "$TAG" > .github/upstream-release.txt
+          git add .github/upstream-release.txt
+          git commit -m "Record upstream release $TAG"
+
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        if: steps.release.outputs.update == 'true'
+        with:
+          go-version-file: echod/go.mod
+          cache-dependency-path: echod/go.sum
+
+      - name: Test Show, Dot and Spot builds
+        if: steps.release.outputs.update == 'true'
+        working-directory: echod
+        shell: bash
+        run: |
+          set -euo pipefail
+          go test ./...
+          go test -tags dot ./...
+          go test -tags spot ./...
+
+      - name: Open pull request in this fork
+        if: steps.release.outputs.update == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.release.outputs.tag }}
+          BRANCH: ${{ steps.release.outputs.branch }}
+          BASE: ${{ github.event.repository.default_branch }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git push origin "HEAD:refs/heads/$BRANCH"
+          body="$(printf 'Upstream TECHO5 %s has been merged with the German fork.\n\nThe Show, Dot and Spot Go tests passed in the update workflow. Please review changed screen labels and test the German menus before merging. No device is updated automatically.\n' "$TAG")"
+          gh pr create --repo "$GITHUB_REPOSITORY" --base "$BASE" --head "$BRANCH" \
+            --title "TECHO5 $TAG in den deutschen Fork übernehmen" --body "$body"
