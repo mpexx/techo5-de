@@ -1,8 +1,8 @@
 # Deutsche Bildschirmtexte
 
-Dieser Zweig ergänzt die TECHO5-Version v0.9.30 (Basis-Commit `4d9147524b24a0058f338e36fbdbf9d4f04ab11d`) um deutsche Texte auf dem Gerätebildschirm. Die Zuordnung fester Texte steht in `echod/internal/feature/display/localize_de.go`; die Wort-Uhr bildet Uhrzeiten in `clock_style.go` auf Deutsch. Die Aufrufstellen liegen im selben Display-Paket. Tests prüfen unter anderem die Uhrstil-Auswahl, gesprochene Uhrzeiten und die Darstellung längerer Texte.
+Dieser Zweig ergänzt die TECHO5-Version v1.0.0 (Release-Commit `9fd82a881b61302eb83aac97424da81f8e4e8cde`) um deutsche Texte auf dem Gerätebildschirm. Die Zuordnung fester Texte steht in `echod/internal/feature/display/localize_de.go`; die Wort-Uhr bildet Uhrzeiten in `clock_style.go` auf Deutsch. Die Aufrufstellen liegen im selben Display-Paket. Tests prüfen unter anderem die Uhrstil-Auswahl, gesprochene Uhrzeiten und die Darstellung längerer Texte.
 
-Die Übersetzung greift nur bei der Darstellung. Interne Kennungen, gespeicherte Einstellungen und Home-Assistant-Entitäten behalten ihre ursprünglichen Werte. Nicht erfasste Texte sowie die Web-Einrichtungsseite bleiben englisch. Die Einstellung „Screen language“ betrifft weiterhin die Sprache gesprochener Bildschirmbefehle.
+Die Übersetzung greift nur bei der Darstellung. Interne Kennungen, gespeicherte Einstellungen und Home-Assistant-Entitäten behalten ihre ursprünglichen Werte. Nicht erfasste Texte sowie die Web-Einrichtungsseite bleiben englisch. Die Einstellung „Bildschirmsprache“ steuert seit v1.0.0 auch Datum und Wetter. Bei „Alle erkennen“ bleibt in diesem Fork Deutsch die Anzeigesprache; eine ausdrücklich gewählte Sprache wird für Datum und Wetter übernommen. Die festen Gerätetexte dieses Forks bleiben deutsch.
 
 Zum Prüfen und Bauen im Repository:
 
@@ -16,11 +16,11 @@ Weitere Bau- und Installationshinweise stehen in [building.md](building.md). Ein
 
 ## Auf spätere Versionen übertragen
 
-1. Den neuen Stand von `HuskerMinion/techo5` als Basis verwenden und diesen Commit mit `git cherry-pick` übernehmen. Bei Konflikten die Änderungen im Display-Paket an die neue Version anpassen.
-2. Neue oder geänderte englische Bildschirmtexte in `germanScreenLabels` ergänzen und die Wort-Uhr in `clockWords` prüfen. Kontext beachten: „Sun“ bezeichnet in der Uhrstil-Auswahl die Sonne; die Abkürzung für Sonntag wird separat über `germanWeekdayAbbrev` erzeugt.
+1. Den neuen Release-Tag von `HuskerMinion/techo5` in den deutschen Zweig mergen. Bei Konflikten die Änderungen im Display-Paket an die neue Version anpassen.
+2. Neue oder geänderte englische Bildschirmtexte in `germanScreenLabels` ergänzen und die Wort-Uhr in `clockWords` prüfen. Kontext beachten: „Sun“ bezeichnet in der Uhrstil-Auswahl die Sonne; Wochentagsnamen kommen jetzt aus `lib/locale`.
 3. `go test ./...` im Verzeichnis `echod` ausführen und die Menüs sowie Sprachzustände am Gerät prüfen.
 
-Patches aller deutschen Änderungen seit der Basisversion v0.9.30 lassen sich mit `git format-patch 4d9147524b24a0058f338e36fbdbf9d4f04ab11d..HEAD` erzeugen.
+Die ursprünglichen deutschen Änderungen bleiben als eigene Commits im Zweig erhalten. Für neue Versionen den nächsten Original-Release-Tag mergen und den Pull Request prüfen.
 
 ## Neue Originalversionen
 
