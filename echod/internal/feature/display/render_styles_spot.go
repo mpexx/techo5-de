@@ -350,14 +350,14 @@ func (r *roundRenderer) analogFace(s roundScene) {
 func (r *roundRenderer) wordsFace(s roundScene) {
 	lead, hour, period := clockWords(s.now)
 	number, link := lead, ""
-	for _, w := range []string{" past", " to"} {
+	for _, w := range []string{" nach", " vor"} {
 		if strings.HasSuffix(lead, w) {
 			number, link = strings.TrimSuffix(lead, w), strings.TrimSpace(w)
 		}
 	}
 	room := func(y int) int { return chord(y) - 60 }
 	if lead == "" {
-		r.centered(r.styleFace(false, 30), "it's", 150, colDim)
+		r.centered(r.styleFace(false, 30), "Es ist", 150, colDim)
 		r.centered(r.fitted(true, 84, hour, room(236)), hour, 236, colAccent)
 		if period != "" {
 			r.centered(r.styleFace(false, 22), period, 290, colDim)
@@ -365,7 +365,7 @@ func (r *roundRenderer) wordsFace(s roundScene) {
 		r.footLine(s, 360, shortDay(s))
 		return
 	}
-	r.centered(r.styleFace(false, 28), "it's", 110, colDim)
+	r.centered(r.styleFace(false, 28), "Es ist", 110, colDim)
 	r.centered(r.fitted(true, 64, number, room(168)), number, 168, colText)
 	r.centered(r.styleFace(false, 30), link, 214, colDim)
 	r.centered(r.fitted(true, 84, hour, room(298)), hour, 298, colAccent)

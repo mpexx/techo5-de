@@ -41,6 +41,8 @@ func TestSpotClockStylesDraw(t *testing.T) {
 		"":        {now: at, phase: "idle", weather: sky, style: facts},
 		"-timer":  {now: at, phase: "idle", weather: sky, style: facts, timers: running},
 		"-oclock": {now: time.Date(2026, 9, 16, 12, 0, 0, 0, time.Local), phase: "idle", weather: sky, style: facts},
+		"-half":   {now: time.Date(2026, 9, 16, 14, 30, 0, 0, time.Local), phase: "idle", weather: sky, style: facts},
+		"-long":   {now: time.Date(2026, 9, 16, 14, 31, 0, 0, time.Local), phase: "idle", weather: sky, style: facts},
 		"-24h":    {now: at, phase: "idle", weather: sky, style: facts},
 	}
 	dir := os.Getenv("SPOT_PREVIEW")

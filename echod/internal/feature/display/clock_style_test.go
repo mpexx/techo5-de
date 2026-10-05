@@ -49,6 +49,8 @@ func TestShowClockStylesDraw(t *testing.T) {
 		"-strip": {now: at, phase: "idle", weather: sky, style: facts, strip: true, playing: true,
 			radio: home.Radio{Now: "KXYZ 101.1", Title: "Take It Easy", Artist: "Eagles"}},
 		"-dawn": {now: time.Date(2026, 9, 16, 5, 30, 0, 0, time.Local), phase: "idle", weather: sky, style: facts},
+		"-half": {now: time.Date(2026, 9, 16, 14, 30, 0, 0, time.Local), phase: "idle", weather: sky, style: facts},
+		"-long": {now: time.Date(2026, 9, 16, 14, 31, 0, 0, time.Local), phase: "idle", weather: sky, style: facts},
 		// The next alarm makes the date line longer; an event tomorrow at a time makes the when longer.
 		"-alarm": {now: at, phase: "idle", weather: sky, style: later, alarms: alarm.View{Next: &alarm.Upcoming{At: at.Add(16 * time.Hour)}}},
 		"-strip-timer": {now: at, phase: "idle", weather: sky, style: facts, timers: running, strip: true, playing: true,
@@ -88,20 +90,25 @@ func TestClockWords(t *testing.T) {
 		h, m               int
 		lead, hour, period string
 	}{
-		{14, 7, "seven past", "two", "in the afternoon"},
-		{14, 0, "", "two o'clock", "in the afternoon"},
-		{14, 15, "quarter past", "two", "in the afternoon"},
-		{14, 30, "half past", "two", "in the afternoon"},
-		{14, 45, "quarter to", "three", "in the afternoon"},
-		{14, 37, "twenty-three to", "three", "in the afternoon"},
-		{9, 1, "a minute past", "nine", "in the morning"},
-		{11, 59, "a minute to", "twelve", "in the morning"},
-		{12, 0, "", "noon", ""},
-		{0, 0, "", "midnight", ""},
-		{23, 50, "ten to", "twelve", "at night"},
-		{19, 20, "twenty past", "seven", "in the evening"},
-		{4, 45, "quarter to", "five", "in the morning"}, // the part of the day is the hour said
-		{17, 45, "quarter to", "six", "in the evening"},
+		{14, 7, "sieben nach", "zwei", "nachmittags"},
+		{14, 0, "", "zwei Uhr", "nachmittags"},
+		{14, 15, "Viertel nach", "zwei", "nachmittags"},
+		{14, 30, "halb", "drei", "nachmittags"},
+		{14, 45, "Viertel vor", "drei", "nachmittags"},
+		{14, 37, "dreiundzwanzig vor", "drei", "nachmittags"},
+		{9, 1, "eine Minute nach", "neun", "morgens"},
+		{11, 59, "eine Minute vor", "zwölf", "vormittags"},
+		{12, 0, "", "Mittag", ""},
+		{0, 0, "", "Mitternacht", ""},
+		{23, 50, "zehn vor", "zwölf", "nachts"},
+		{19, 20, "zwanzig nach", "sieben", "abends"},
+		{4, 45, "Viertel vor", "fünf", "morgens"},
+		{17, 45, "Viertel vor", "sechs", "abends"},
+		{13, 0, "", "ein Uhr", "mittags"},
+		{1, 0, "", "ein Uhr", "nachts"},
+		{0, 30, "halb", "eins", "nachts"},
+		{10, 21, "einundzwanzig nach", "zehn", "vormittags"},
+		{14, 31, "neunundzwanzig vor", "drei", "nachmittags"},
 	} {
 		lead, hour, period := clockWords(time.Date(2026, 9, 16, c.h, c.m, 0, 0, time.Local))
 		if lead != c.lead || hour != c.hour || period != c.period {

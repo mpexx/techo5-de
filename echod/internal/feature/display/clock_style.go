@@ -163,67 +163,78 @@ func upcomingEvents(now time.Time, n int) []hass.Event {
 	return out[:min(len(out), n)]
 }
 
-// numberWords are the numbers the words style says.
-var numberWords = []string{"", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten",
-	"eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty"}
+// numberWords are the German numbers used by the word clock.
+var numberWords = []string{"", "eins", "zwei", "drei", "vier", "fünf", "sechs", "sieben", "acht", "neun", "zehn",
+	"elf", "zwölf", "dreizehn", "vierzehn", "fünfzehn", "sechzehn", "siebzehn", "achtzehn", "neunzehn", "zwanzig"}
 
 func numberWord(n int) string {
 	if n <= 20 {
 		return numberWords[n]
 	}
-	return "twenty-" + numberWords[n-20]
+	first := numberWords[n-20]
+	if n == 21 {
+		first = "ein"
+	}
+	return first + "undzwanzig"
 }
 
-// clockWords is the time as it is said: what comes before the hour ("seven past", "quarter to", empty
-// on the hour), the hour ("two", "two o'clock", "noon", "midnight"), and the part of the day.
+// clockWords returns the German spoken time: the part before the hour ("sieben nach", "halb",
+// "Viertel vor"), the hour ("zwei", "zwei Uhr", "Mittag", "Mitternacht"), and the time of day.
 func clockWords(t time.Time) (lead, hour, period string) {
 	h, m := t.Hour(), t.Minute()
 	switch {
 	case m == 0:
 	case m == 1:
-		lead = "a minute past"
+		lead = "eine Minute nach"
 	case m == 15:
-		lead = "quarter past"
+		lead = "Viertel nach"
 	case m == 30:
-		lead = "half past"
+		lead = "halb"
 	case m == 45:
-		lead = "quarter to"
+		lead = "Viertel vor"
 	case m == 59:
-		lead = "a minute to"
+		lead = "eine Minute vor"
 	case m < 30:
-		lead = numberWord(m) + " past"
+		lead = numberWord(m) + " nach"
 	default:
-		lead = numberWord(60-m) + " to"
+		lead = numberWord(60-m) + " vor"
 	}
 	said := h
-	if m > 30 {
+	// German "halb drei" is 2:30, so the next hour begins at the half hour.
+	if m >= 30 {
 		said = (h + 1) % 24
 	}
-	// The part of the day is the said hour's - "quarter to five in the morning", not "at night" - except
-	// for noon and midnight, which belong to the hour before them.
+	// For times just before noon and midnight, name the part of the day of the actual hour.
 	ph := said
 	if said == 12 || said == 0 {
 		ph = h
 	}
 	switch {
 	case said == 0 && m == 0:
-		return "", "midnight", ""
+		return "", "Mitternacht", ""
 	case said == 12 && m == 0:
-		return "", "noon", ""
+		return "", "Mittag", ""
 	}
 	hour = numberWords[(said+11)%12+1]
 	if m == 0 {
-		hour += " o'clock"
+		if hour == "eins" {
+			hour = "ein"
+		}
+		hour += " Uhr"
 	}
 	switch {
-	case ph >= 5 && ph < 12:
-		period = "in the morning"
-	case ph >= 12 && ph < 18:
-		period = "in the afternoon"
+	case ph >= 5 && ph < 10:
+		period = "morgens"
+	case ph >= 10 && ph < 12:
+		period = "vormittags"
+	case ph >= 12 && ph < 14:
+		period = "mittags"
+	case ph >= 14 && ph < 18:
+		period = "nachmittags"
 	case ph >= 18 && ph < 22:
-		period = "in the evening"
+		period = "abends"
 	default:
-		period = "at night"
+		period = "nachts"
 	}
 	return lead, hour, period
 }

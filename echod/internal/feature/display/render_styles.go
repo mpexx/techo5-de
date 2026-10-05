@@ -271,7 +271,7 @@ func (r *renderer) dial(now time.Time, cx, cy, rad float64) {
 	r.over.note(image.Rect(int(cx-rad), int(cy-rad), int(cx+rad), int(cy+rad)))
 }
 
-// wordsStyle says the time: "it's seven past two in the afternoon". Everything shrinks together when
+// wordsStyle says the time: "Es ist sieben nach zwei nachmittags". Everything shrinks together when
 // a timer or a strip at the foot leaves it less height than it was drawn for.
 func (r *renderer) wordsStyle(s scene, box image.Rectangle) {
 	lead, hour, period := clockWords(s.now)
@@ -288,7 +288,7 @@ func (r *renderer) wordsStyle(s scene, box image.Rectangle) {
 	}
 	small := r.styleFace(false, at(44))
 	y := box.Min.Y + r.s(at(44))
-	r.text(small, "it's", x, y, dim)
+	r.text(small, "Es ist", x, y, dim)
 	if lead != "" {
 		f := fit(true, 104, lead, room)
 		y += capHeight(f) + r.s(at(34))
